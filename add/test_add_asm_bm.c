@@ -59,6 +59,8 @@ void compare(int correct_matrix[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE], int test_ma
 }
 
 int main(){
+    int my_a[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE] = {0};
+    int my_b[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE] = {0};
     int my_c[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE] = {0};
     register int tmp_c;
     register int tmp_b;
