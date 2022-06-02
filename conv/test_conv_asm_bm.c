@@ -36,8 +36,6 @@ int main(){
         int (*pa)[MATRIX_SIZE] = my_a[m];
         int (*pb)[MATRIX_SIZE] = my_b[m];
         int (*pc)[MATRIX_SIZE] = my_c[m];
-        display3D(my_a);
-        display3D(my_b);
         __asm__ volatile("m_ld_l %[tmp_a], 0(%[a])\n\t"
                             "m_ld_r %[tmp_b], 0(%[b])\n\t"
                             "m_mult %[tmp_c], %[tmp_a], %[tmp_b]\n\t"
