@@ -3,7 +3,8 @@
 
 #define N_BLOCKS 2
 #define MATRIX_SIZE 7
-#define N_ITERATIONS 1000
+#define N_ITERATIONS 100
+
 // function to display the matrix
 void display3D(int result[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE]){
 
