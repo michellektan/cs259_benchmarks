@@ -1,13 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define MATRIX_SIZE 7
-#define N_BLOCKS 2
+#define N_BLOCKS 1
 #define N_ITERATIONS 100
 
 // function to display the matrix
 void display3D(int result[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE]){
-
-   printf("\nOutput 3D:\n");
     for(int m = 0; m < N_BLOCKS; m++){
         for (int i = 0; i < MATRIX_SIZE; ++i) {
             for (int j = 0; j < MATRIX_SIZE; ++j) {
@@ -58,6 +56,7 @@ int main(){
 
     for (int i = 0; i < N_ITERATIONS; i++){
         add(my_c);
+        printf("finished %dth iteration\n\n", i);
     }
-    printf("finished all iterations\n");
+    printf("finished all %d iterations\n", N_ITERATIONS);
 }

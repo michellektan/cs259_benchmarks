@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define N_BLOCKS 2
+#define N_BLOCKS 1
 #define MATRIX_SIZE 7
 #define N_ITERATIONS 100
 
 // function to display the matrix
 void display3D(int result[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE]){
-
-   printf("\nOutput 3D:\n");
     for(int m = 0; m < N_BLOCKS; m++){
         for (int i = 0; i < MATRIX_SIZE; ++i) {
             for (int j = 0; j < MATRIX_SIZE; ++j) {
@@ -56,13 +54,13 @@ int main(){
         }
     }
 
+ 
  #pragma GCC unroll 0
+ for(int i = 0; i < N_ITERATIONS; i++){
     for (int m = 0; m < N_BLOCKS; m++){
         int (*pa)[MATRIX_SIZE] = my_a[m];
         int (*pb)[MATRIX_SIZE] = my_b[m];
         int (*pc)[MATRIX_SIZE] = my_c[m];
-       // display3D(my_a);
-       // display3D(my_b);
         __asm__ volatile("m_ld_l %[tmp_a], 0(%[a])\n\t"
                             "m_ld_r %[tmp_b], 0(%[b])\n\t"
                             "m_mult %[tmp_c], %[tmp_a], %[tmp_b]\n\t"
@@ -73,6 +71,7 @@ int main(){
                         :
                         : [c] "r"(pc), [tmp_c] "r"(tmp_c));
     }
-
-    printf("finished all iterations\n");
+    printf("finished %dth iteration\n\n", i);
+ }
+    printf("finished all %d iterations\n", N_ITERATIONS);
 }

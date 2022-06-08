@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define N_BLOCKS 1
+#define N_BLOCKS 10
 #define MATRIX_SIZE 7
 #define KERNEL_SIZE 3
 #define OUTPUT_SIZE 7

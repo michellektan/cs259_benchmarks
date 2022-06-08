@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #define MATRIX_SIZE 7
 #define N_ITERATIONS 100
-#define N_BLOCKS 1
+#define N_BLOCKS 10
 
 void display3D(int result[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE]){
     for(int m = 0; m < N_BLOCKS; m++){

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define N_BLOCKS 1
+#define N_BLOCKS 10
 #define N_ITERATIONS 100
 #define MATRIX_SIZE 7
 #define INPUT_MATRIX_SIZE 5

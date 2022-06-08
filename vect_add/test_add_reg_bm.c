@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define MATRIX_SIZE 7
+#define N_BLOCKS 10
 #define N_ITERATIONS 100
-#define N_BLOCKS 1
 
+// function to display the matrix
 void display3D(int result[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE]){
     for(int m = 0; m < N_BLOCKS; m++){
         for (int i = 0; i < MATRIX_SIZE; ++i) {
@@ -16,8 +17,9 @@ void display3D(int result[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE]){
         printf("\n");
     }
 }
+
 // same multiply function implemented in riscv
-void multiply(int c[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE]){;
+void add(int c[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE]){;
     
     //initialize matrices a and b
     int a[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE];
@@ -30,18 +32,19 @@ void multiply(int c[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE]){;
             }
         }
     }
-
+    
+    printf("displaying A: \n");
+    display3D(a);
+    printf("displaying B: \n");
+    display3D(b);
+    
     for (int m = 0; m < N_BLOCKS; m++){
         int (*pa)[MATRIX_SIZE] = a[m];
         int (*pb)[MATRIX_SIZE] = b[m];
         int (*pc)[MATRIX_SIZE] = c[m];
         for (int i = 0; i < MATRIX_SIZE; ++i) {
             for (int j = 0; j < MATRIX_SIZE; ++j) {
-                int sum = 0;
-                for (int k = 0; k < MATRIX_SIZE; ++k) {
-                    sum += pa[i][k] * pb[k][j];
-                }
-                pc[i][j] = sum;
+                pc[i][j] = pa[i][j] + pb[i][j];
             }
         }
     }
@@ -52,8 +55,8 @@ int main(){
     int my_c[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE] = {0};
 
     for (int i = 0; i < N_ITERATIONS; i++){
-        multiply(my_c);
+        add(my_c);
         printf("finished %dth iteration\n\n", i);
     }
-      printf("finished all %d iterations\n", N_ITERATIONS);
+    printf("finished all %d iterations\n", N_ITERATIONS);
 }
