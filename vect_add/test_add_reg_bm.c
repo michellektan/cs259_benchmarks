@@ -94,11 +94,11 @@ int main(){
 
     initialize_blocks(my_a, my_b);
     
-
+    /*
     printf("displaying a(all batches):\n");
     display3D(my_a);
     printf("displaying b(all batches):\n");
-    display3D(my_b);
+    display3D(my_b);*/
     
     pthread_t threads[N_BLOCKS];
     int iret1, iret2;
@@ -113,8 +113,8 @@ int main(){
             pthread_join(*(threads+n), NULL);
         }
         
-        printf("displaying c(all batches):\n");
-        display3D(my_c);
+        /*printf("displaying c(all batches):\n");
+        display3D(my_c);*/
         printf("finished %dth iteration\n\n", i);
     }
     printf("finished all %d iterations\n", N_ITERATIONS);

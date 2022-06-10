@@ -110,9 +110,9 @@ int main(){
     int my_c[N_BLOCKS][OUTPUT_SIZE][OUTPUT_SIZE] = {0};
 
     initialize_blocks(my_a, my_b);
-
+    /*
     printf("displaying a(all batches):\n");
-    display3D(my_a);
+    display3D(my_a);*/
     
     pthread_t threads[N_BLOCKS];
     int iret1, iret2;
@@ -126,9 +126,9 @@ int main(){
             pthread_create(&threads[n], NULL, convolution,  &thread_args[n]);
             pthread_join(*(threads+n), NULL);
         }
-
+        /*
         printf("displaying c(all batches):\n");
-        display3D(my_c);
+        display3D(my_c);*/
         printf("finished %dth iteration\n\n", i);
     }
      printf("finished all %d iterations\n\n", N_ITERATIONS);
