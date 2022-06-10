@@ -13,6 +13,7 @@ Code, Compile, Run and Debug online from anywhere in world.
 #define toeplitz_y_dim filter_dim*filter_dim
 #define overlap_dim input_matrix_dim - filter_dim + 1
 #define MATRIX_SIZE 7
+
 void display2D(int result[MATRIX_SIZE][MATRIX_SIZE]){
 
    printf("\nMatrix 2D:\n");
@@ -24,7 +25,7 @@ void display2D(int result[MATRIX_SIZE][MATRIX_SIZE]){
    }
 }
 
-void toeplitz_convolution(int input_matrix[input_matrix_dim][input_matrix_dim], int filter[filter_dim][filter_dim], int output_matrix[MATRIX_SIZE][MATRIX_SIZE], int input_toeplitz_matrix[MATRIX_SIZE][MATRIX_SIZE, int filter_matrix[MATRIX_SIZE][MATRIX_SIZE] ){
+void toeplitz_convolution(int input_matrix[input_matrix_dim][input_matrix_dim], int filter[filter_dim][filter_dim], int output_matrix[MATRIX_SIZE][MATRIX_SIZE], int input_toeplitz_matrix[MATRIX_SIZE][MATRIX_SIZE], int filter_matrix[MATRIX_SIZE][MATRIX_SIZE] ){
      //int filter_vector[filter_dim*filter_dim];
      //int filter_matrix[MATRIX_SIZE][MATRIX_SIZE] = {{0}};
      //int input_toeplitz[toeplitz_x_dim][toeplitz_y_dim] = {{0}};
@@ -39,6 +40,8 @@ void toeplitz_convolution(int input_matrix[input_matrix_dim][input_matrix_dim], 
              vec_i +=1;
          }
      }
+    printf("Filter Matrix\n");
+    display2D(filter_matrix);
 
      //Iterate through input matrix overlaps
      int row = 0;
@@ -58,7 +61,8 @@ void toeplitz_convolution(int input_matrix[input_matrix_dim][input_matrix_dim], 
          }
      }
      
-     //display2D(input_toeplitz_matrix);
+     printf("Toeplitz Matrix \n");
+     display2D(input_toeplitz_matrix);
      
      //Matrix multiply
      for(int i = 0; i<MATRIX_SIZE; i++){
@@ -115,18 +119,18 @@ int main()
                    :
                    : [c] "r"(my_c[0][0]), [tmp_c] "r"(tmp_c));
 
-    #pragma GCC unroll 0
+    // #pragma GCC unroll 0
 
     // Load the output.
     int (*pa)[MATRIX_SIZE] = input_toeplitz_matrix;
     int (*pb)[MATRIX_SIZE] = filter_matrix;
     int (*pc)[MATRIX_SIZE] = my_c;
-        __asm__ volatile("m_ld_l %[tmp_a], 0(%[a])\n\t"
-                        "m_ld_r %[tmp_b], 0(%[b])\n\t"
-                        "m_mult %[tmp_c], %[tmp_a], %[tmp_b]\n\t"
-                        : [tmp_c] "=&r"(tmp_c), [tmp_a] "=r"(tmp_a),
-                        [tmp_b] "=r"(tmp_b)
-                        : [a] "r"(pa), [b] "r"(pb));
+    __asm__ volatile("m_ld_l %[tmp_a], 0(%[a])\n\t"
+                    "m_ld_r %[tmp_b], 0(%[b])\n\t"
+                    "m_mult %[tmp_c], %[tmp_a], %[tmp_b]\n\t"
+                    : [tmp_c] "=&r"(tmp_c), [tmp_a] "=r"(tmp_a),
+                    [tmp_b] "=r"(tmp_b)
+                    : [a] "r"(pa), [b] "r"(pb));
     __asm__ volatile("m_st %[tmp_c], 0(%[c])\n\t"
                     :
                     : [c] "r"(pc), [tmp_c] "r"(tmp_c));
