@@ -60,12 +60,12 @@ int main(){
         }
     }
 
+    int (*pa)[MATRIX_SIZE][MATRIX_SIZE] = my_a;
+    int (*pb)[KERNEL_SIZE][KERNEL_SIZE] = my_b;
+    int (*pc)[OUTPUT_SIZE][OUTPUT_SIZE] = my_c;
+
  #pragma GCC unroll 0
  for(int i = 0; i < N_ITERATIONS; i++){
-    for (int m = 0; m < N_BLOCKS; m++){
-        int (*pa)[MATRIX_SIZE] = my_a[m];
-        int (*pb)[KERNEL_SIZE] = my_b[m];
-        int (*pc)[OUTPUT_SIZE] = my_c[m];
         __asm__ volatile("m_ld_l %[tmp_a], 0(%[a])\n\t"
                             "m_ld_r %[tmp_b], 0(%[b])\n\t"
                             "m_mult %[tmp_c], %[tmp_a], %[tmp_b]\n\t"
@@ -75,8 +75,8 @@ int main(){
         __asm__ volatile("m_st %[tmp_c], 0(%[c])\n\t"
                         :
                         : [c] "r"(pc), [tmp_c] "r"(tmp_c));
-    }
+    
     printf("finished %dth iteration\n\n", i);
- }
+    }
     printf("finished all %d iterations\n", N_ITERATIONS);
 }
