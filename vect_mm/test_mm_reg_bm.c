@@ -46,6 +46,7 @@ void initialize_blocks(int a[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE], int b[N_BLOCKS
         }
     }
 }
+
 // same multiply function implemented in riscv
 void * multiply(void * threadarg){;
      int (*my_a_ptr)[MATRIX_SIZE];
@@ -86,20 +87,20 @@ int main(){
     pthread_t threads[N_BLOCKS];
     int iret1, iret2;
 
-for(int i = 0; i < N_ITERATIONS; i++){
-    for(int n = 0; n < N_BLOCKS; n++){
-        thread_args[n].a_ptr = *(my_a + n);
-        thread_args[n].b_ptr = *(my_b + n);
-        thread_args[n].c_ptr = *(my_c + n);
+    for(int i = 0; i < N_ITERATIONS; i++){
+        for(int n = 0; n < N_BLOCKS; n++){
+            thread_args[n].a_ptr = *(my_a + n);
+            thread_args[n].b_ptr = *(my_b + n);
+            thread_args[n].c_ptr = *(my_c + n);
 
-        pthread_create(&threads[n], NULL, multiply,  &thread_args[n]);
-        pthread_join(*(threads+n), NULL);
+            pthread_create(&threads[n], NULL, multiply,  &thread_args[n]);
+            pthread_join(*(threads+n), NULL);
+        }
+        
+        printf("displaying c(all batches):\n");
+        display3D(my_c);
+        printf("finished %dth iteration\n\n", i);
     }
-
-    printf("displaying c(all batches):\n");
-    display3D(my_c);
-    printf("finished %dth iteration\n\n", i);
-}
     printf("finished all %d iterations\n", N_ITERATIONS);
 }
 

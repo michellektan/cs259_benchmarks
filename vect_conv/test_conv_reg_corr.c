@@ -1,9 +1,16 @@
 #include <stdio.h>
-#define N_BLOCKS 2
+#include <pthread.h>
+#define N_BLOCKS 10
 #define MATRIX_SIZE 7
 #define INPUT_MATRIX_SIZE 5
 #define KERNEL_SIZE 3
 #define OUTPUT_SIZE 7
+
+ struct thread_data{
+     int (*a_ptr)[MATRIX_SIZE];
+     int (*b_ptr)[KERNEL_SIZE];
+     int (*c_ptr)[OUTPUT_SIZE];
+    };
 
 // function to display the matrix
 void display3D(int result[N_BLOCKS][OUTPUT_SIZE][OUTPUT_SIZE]){
@@ -21,7 +28,17 @@ void display3D(int result[N_BLOCKS][OUTPUT_SIZE][OUTPUT_SIZE]){
     }
 }
 
-void convolution(int input[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE], int kernel[N_BLOCKS][KERNEL_SIZE][KERNEL_SIZE], int output[N_BLOCKS][OUTPUT_SIZE][OUTPUT_SIZE]){;
+void * convolution(void * threadarg){;
+     int (*my_a_ptr)[MATRIX_SIZE];
+     int (*my_b_ptr)[KERNEL_SIZE];
+     int (*my_c_ptr)[OUTPUT_SIZE];
+    struct thread_data *my_data;
+    my_data = (struct thread_data *) threadarg;
+
+    my_a_ptr = my_data -> a_ptr;
+    my_b_ptr = my_data -> b_ptr;
+    my_c_ptr = my_data -> c_ptr;
+
     int k_center_x = KERNEL_SIZE/2;
     int k_center_y = KERNEL_SIZE/2;
     int mm = 0;
@@ -29,10 +46,7 @@ void convolution(int input[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE], int kernel[N_BLO
     int ii = 0;
     int jj = 0;
     int conv = 0;
-    for (int m = 0; m < N_BLOCKS; m++){
-        int (*p_input)[MATRIX_SIZE] = input[m];
-        int (*p_kernel)[KERNEL_SIZE] = kernel[m];
-        int (*p_output)[OUTPUT_SIZE] = output[m];
+
         for (int i = 0; i < MATRIX_SIZE; ++i) {
             for (int j = 0; j < MATRIX_SIZE; ++j) {
                 conv = 0;
@@ -43,14 +57,13 @@ void convolution(int input[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE], int kernel[N_BLO
                         ii = i + (k_center_y - mm);
                         jj = j + (k_center_x - nn);
                         if(ii >= 0 && ii < MATRIX_SIZE && jj >= 0 && jj < MATRIX_SIZE){
-                            conv += p_input[ii][jj] * p_kernel[mm][nn];
+                            conv += my_a_ptr[ii][jj] * my_b_ptr[mm][nn];
                         }
                     }
                 }
-                p_output[i][j] = conv;
+                my_c_ptr[i][j] = conv;
             }
         }
-    }
 }
 
 
@@ -72,8 +85,66 @@ void compare(int correct_matrix[N_BLOCKS][OUTPUT_SIZE][OUTPUT_SIZE], int test_ma
 }
 
 int main(){
-     int my_input[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE] = {
+     struct thread_data thread_args[N_BLOCKS];
+
+     int my_a[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE] = {
                         {{0, 0, 0, 0, 0, 0, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 2, 1, 3, 4, 4, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 0, 0, 0, 0, 0, 0}},
+                         {{0, 0, 0, 0, 0, 0, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 2, 1, 3, 4, 4, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 0, 0, 0, 0, 0, 0}},
+                         {{0, 0, 0, 0, 0, 0, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 2, 1, 3, 4, 4, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 0, 0, 0, 0, 0, 0}},
+                         {{0, 0, 0, 0, 0, 0, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 2, 1, 3, 4, 4, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 0, 0, 0, 0, 0, 0}},
+                         {{0, 0, 0, 0, 0, 0, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 2, 1, 3, 4, 4, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 0, 0, 0, 0, 0, 0}},
+                         {{0, 0, 0, 0, 0, 0, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 2, 1, 3, 4, 4, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 0, 0, 0, 0, 0, 0}},
+                         {{0, 0, 0, 0, 0, 0, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 2, 1, 3, 4, 4, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 0, 0, 0, 0, 0, 0}},
+                         {{0, 0, 0, 0, 0, 0, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 2, 1, 3, 4, 4, 0},
+                        {0, 4, 5, 3, 5, 6, 0},
+                        {0, 6, 1, 2, 5, 7, 0},
+                        {0, 0, 0, 0, 0, 0, 0}},
+                         {{0, 0, 0, 0, 0, 0, 0},
                         {0, 4, 5, 3, 5, 6, 0},
                         {0, 6, 1, 2, 5, 7, 0},
                         {0, 2, 1, 3, 4, 4, 0},
@@ -88,8 +159,32 @@ int main(){
                         {0, 6, 1, 2, 5, 7, 0},
                         {0, 0, 0, 0, 0, 0, 0}}
     };
-    int my_kernel[N_BLOCKS][KERNEL_SIZE][KERNEL_SIZE] = {
+    int my_b[N_BLOCKS][KERNEL_SIZE][KERNEL_SIZE] = {
                         {{2, 1, 3},
+                         {1, 3, 4},
+                         {1, 4, 5}},
+                         {{2, 1, 3},
+                         {1, 3, 4},
+                         {1, 4, 5}},
+                          {{2, 1, 3},
+                         {1, 3, 4},
+                         {1, 4, 5}},
+                         {{2, 1, 3},
+                         {1, 3, 4},
+                         {1, 4, 5}},
+                          {{2, 1, 3},
+                         {1, 3, 4},
+                         {1, 4, 5}},
+                         {{2, 1, 3},
+                         {1, 3, 4},
+                         {1, 4, 5}},
+                          {{2, 1, 3},
+                         {1, 3, 4},
+                         {1, 4, 5}},
+                         {{2, 1, 3},
+                         {1, 3, 4},
+                         {1, 4, 5}},
+                          {{2, 1, 3},
                          {1, 3, 4},
                          {1, 4, 5}},
                          {{2, 1, 3},
@@ -111,16 +206,85 @@ int correct_matrix[N_BLOCKS][OUTPUT_SIZE][OUTPUT_SIZE] = {
                         {16, 46, 73, 63, 91, 102, 69},
                         {18, 34, 74, 70, 93, 96, 65},
                         {10, 40, 72, 57, 71, 90, 58},
+                        {6, 25, 36, 18, 37, 53, 35}},
+                         {{8, 14, 23, 28, 26, 21, 18},
+                        {16, 25, 57, 49, 58, 60, 45},
+                        {14, 44, 85, 71, 92, 106, 70},
+                        {16, 46, 73, 63, 91, 102, 69},
+                        {18, 34, 74, 70, 93, 96, 65},
+                        {10, 40, 72, 57, 71, 90, 58},
+                        {6, 25, 36, 18, 37, 53, 35}},
+                        {{8, 14, 23, 28, 26, 21, 18},
+                        {16, 25, 57, 49, 58, 60, 45},
+                        {14, 44, 85, 71, 92, 106, 70},
+                        {16, 46, 73, 63, 91, 102, 69},
+                        {18, 34, 74, 70, 93, 96, 65},
+                        {10, 40, 72, 57, 71, 90, 58},
+                        {6, 25, 36, 18, 37, 53, 35}},
+                         {{8, 14, 23, 28, 26, 21, 18},
+                        {16, 25, 57, 49, 58, 60, 45},
+                        {14, 44, 85, 71, 92, 106, 70},
+                        {16, 46, 73, 63, 91, 102, 69},
+                        {18, 34, 74, 70, 93, 96, 65},
+                        {10, 40, 72, 57, 71, 90, 58},
+                        {6, 25, 36, 18, 37, 53, 35}},
+                        {{8, 14, 23, 28, 26, 21, 18},
+                        {16, 25, 57, 49, 58, 60, 45},
+                        {14, 44, 85, 71, 92, 106, 70},
+                        {16, 46, 73, 63, 91, 102, 69},
+                        {18, 34, 74, 70, 93, 96, 65},
+                        {10, 40, 72, 57, 71, 90, 58},
+                        {6, 25, 36, 18, 37, 53, 35}},
+                         {{8, 14, 23, 28, 26, 21, 18},
+                        {16, 25, 57, 49, 58, 60, 45},
+                        {14, 44, 85, 71, 92, 106, 70},
+                        {16, 46, 73, 63, 91, 102, 69},
+                        {18, 34, 74, 70, 93, 96, 65},
+                        {10, 40, 72, 57, 71, 90, 58},
+                        {6, 25, 36, 18, 37, 53, 35}},
+                        {{8, 14, 23, 28, 26, 21, 18},
+                        {16, 25, 57, 49, 58, 60, 45},
+                        {14, 44, 85, 71, 92, 106, 70},
+                        {16, 46, 73, 63, 91, 102, 69},
+                        {18, 34, 74, 70, 93, 96, 65},
+                        {10, 40, 72, 57, 71, 90, 58},
+                        {6, 25, 36, 18, 37, 53, 35}},
+                         {{8, 14, 23, 28, 26, 21, 18},
+                        {16, 25, 57, 49, 58, 60, 45},
+                        {14, 44, 85, 71, 92, 106, 70},
+                        {16, 46, 73, 63, 91, 102, 69},
+                        {18, 34, 74, 70, 93, 96, 65},
+                        {10, 40, 72, 57, 71, 90, 58},
+                        {6, 25, 36, 18, 37, 53, 35}},
+                        {{8, 14, 23, 28, 26, 21, 18},
+                        {16, 25, 57, 49, 58, 60, 45},
+                        {14, 44, 85, 71, 92, 106, 70},
+                        {16, 46, 73, 63, 91, 102, 69},
+                        {18, 34, 74, 70, 93, 96, 65},
+                        {10, 40, 72, 57, 71, 90, 58},
                         {6, 25, 36, 18, 37, 53, 35}}
 
     };
 
-    int my_output[N_BLOCKS][OUTPUT_SIZE][OUTPUT_SIZE] = {0};
+    int my_c[N_BLOCKS][OUTPUT_SIZE][OUTPUT_SIZE] = {0};
 
-    for (int i = 0; i < 10; i++){
-        convolution(my_input, my_kernel, my_output);
-    }
-    display3D(my_output);
-    compare(correct_matrix, my_output);
+    printf("displaying a(all batches):\n");
+    display3D(my_a);
+    
+    pthread_t threads[N_BLOCKS];
+    int iret1, iret2;
+
+        for(int n = 0; n < N_BLOCKS; n++){
+            thread_args[n].a_ptr = *(my_a + n);
+            thread_args[n].b_ptr = *(my_b + n);
+            thread_args[n].c_ptr = *(my_c + n);
+
+            pthread_create(&threads[n], NULL, convolution,  &thread_args[n]);
+            pthread_join(*(threads+n), NULL);
+        }
+
+        printf("displaying c(all batches):\n");
+        display3D(my_c);
+
+    compare(my_c, correct_matrix);
 }
-

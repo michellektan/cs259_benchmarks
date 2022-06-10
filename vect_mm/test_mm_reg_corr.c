@@ -320,7 +320,6 @@ int main(){
     pthread_t threads[N_BLOCKS];
     int iret1, iret2;
 
-    for(int i = 0; i < 1; i++){
         for(int n = 0; n < N_BLOCKS; n++){
             thread_args[n].a_ptr = *(my_a + n);
             thread_args[n].b_ptr = *(my_b + n);
@@ -332,7 +331,6 @@ int main(){
 
         printf("displaying c(all batches):\n");
         display3D(my_c);
-    }
 
     compare(my_c, correct_matrix);
 }
