@@ -117,7 +117,7 @@ int main()
 
      __asm__ volatile("m_st %[tmp_c], 0(%[c])\n\t"
                    :
-                   : [c] "r"(my_c[0][0]), [tmp_c] "r"(tmp_c));
+                   : [c] "r"(my_c[0]), [tmp_c] "r"(tmp_c));
 
     // #pragma GCC unroll 0
 

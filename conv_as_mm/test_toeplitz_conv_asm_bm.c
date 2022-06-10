@@ -27,7 +27,7 @@ void display2D(int result[MATRIX_SIZE][MATRIX_SIZE]){
    }
 }
 
-void toeplitz_convolution(int input_matrix[input_matrix_dim][input_matrix_dim], int filter[filter_dim][filter_dim], int output_matrix[MATRIX_SIZE][MATRIX_SIZE], int input_toeplitz_matrix[MATRIX_SIZE][MATRIX_SIZE, int filter_matrix[MATRIX_SIZE][MATRIX_SIZE] ){
+void toeplitz_convolution(int input_matrix[input_matrix_dim][input_matrix_dim], int filter[filter_dim][filter_dim], int output_matrix[MATRIX_SIZE][MATRIX_SIZE], int input_toeplitz_matrix[MATRIX_SIZE][MATRIX_SIZE], int filter_matrix[MATRIX_SIZE][MATRIX_SIZE] ){
      //int filter_vector[filter_dim*filter_dim];
      //int filter_matrix[MATRIX_SIZE][MATRIX_SIZE] = {{0}};
      //int input_toeplitz[toeplitz_x_dim][toeplitz_y_dim] = {{0}};
@@ -42,7 +42,8 @@ void toeplitz_convolution(int input_matrix[input_matrix_dim][input_matrix_dim], 
              vec_i +=1;
          }
      }
-
+    //  printf("Filter Matrix\n");
+    //  display2D(filter_matrix);
      //Iterate through input matrix overlaps
      int row = 0;
      for(int i = 0; i<overlap_dim; i++){
@@ -60,8 +61,8 @@ void toeplitz_convolution(int input_matrix[input_matrix_dim][input_matrix_dim], 
              row+=1;
          }
      }
-     
-     //display2D(input_toeplitz_matrix);
+    //  printf("Toeplitz Matrix \n");
+    //  display2D(input_toeplitz_matrix);
      
      //Matrix multiply
      for(int i = 0; i<MATRIX_SIZE; i++){
@@ -73,15 +74,27 @@ void toeplitz_convolution(int input_matrix[input_matrix_dim][input_matrix_dim], 
             output_matrix[i][j] = sum;
         }
      }
-    printf("Output Matrix \n");
-    display2D(output_matrix);
+    // printf("Output Matrix \n");
+    // display2D(output_matrix);
 
  }
 
+void compare(int toeplitz_conv[MATRIX_SIZE][MATRIX_SIZE], int reg_conv[MATRIX_SIZE][MATRIX_SIZE]){
+    for(int x = 0; x < MATRIX_SIZE; x++){
+        for(int y = 0; y < MATRIX_SIZE; y++){
+            if(toeplitz_conv[x][y]!=reg_conv[x][y]){
+                printf("Test failed!");
+                return;
+            }
+        }
+    }
+    printf("Test passed!");
+}
 int main()
 {
-                                          
+    #pragma GCC unroll 0                                      
     for(int iter = 0; iter < iterations; iter++){
+        
         //initialize matrices
         int input_matrix[input_matrix_dim][input_matrix_dim] = {{0}};
         int filter[filter_dim][filter_dim] = {{0}};
@@ -112,9 +125,9 @@ int main()
     
          __asm__ volatile("m_st %[tmp_c], 0(%[c])\n\t"
                        :
-                       : [c] "r"(my_c[0][0]), [tmp_c] "r"(tmp_c));
+                       : [c] "r"(my_c[0]), [tmp_c] "r"(tmp_c));
     
-        #pragma GCC unroll 0
+        
         //Load the output
         int (*pa)[MATRIX_SIZE] = input_toeplitz_matrix;
         int (*pb)[MATRIX_SIZE] = filter_matrix;
@@ -129,7 +142,7 @@ int main()
                         :
                         : [c] "r"(pc), [tmp_c] "r"(tmp_c));
         
-        compare(output_matrix, my_c);
+        //compare(output_matrix, my_c);
         printf("finished %dth iteration\n\n", iter);
     }
     printf("finished all %d iterations\n", iterations);
