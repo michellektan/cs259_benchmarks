@@ -77,7 +77,6 @@ int main(){
     int my_c[N_BLOCKS][MATRIX_SIZE][MATRIX_SIZE] = {0};
 
     initialize_blocks(my_a, my_b);
-
     
     printf("displaying a(all batches):\n");
     display3D(my_a);
